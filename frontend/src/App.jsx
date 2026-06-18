@@ -6,7 +6,7 @@ import {
 } from 'recharts';
 import { Activity, Users, DollarSign, ArrowUpRight, TrendingUp } from 'lucide-react';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/analytics';
+const API_BASE_URL = '/api/analytics';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
@@ -22,20 +22,16 @@ function App() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [summaryRes, monthlyRes, categoryRes, deviceRes] = await Promise.all([
-          axios.get(`${API_BASE_URL}/summary`),
-          axios.get(`${API_BASE_URL}/sales/monthly`),
-          axios.get(`${API_BASE_URL}/sales/category`),
-          axios.get(`${API_BASE_URL}/users/device`),
-        ]);
+        const res = await axios.get(API_BASE_URL);
+        const data = res.data;
 
-        setSummary(summaryRes.data);
-        setMonthlySales(monthlyRes.data);
-        setCategorySales(categoryRes.data);
-        setDeviceActivity(deviceRes.data);
+        setSummary(data.summary);
+        setMonthlySales(data.monthlySales);
+        setCategorySales(data.categorySales);
+        setDeviceActivity(data.deviceActivity);
       } catch (err) {
         console.error("Error fetching data:", err);
-        setError("Failed to connect to the backend API. Please ensure the backend server is running and seeded.");
+        setError("Failed to connect to the backend API.");
       } finally {
         setLoading(false);
       }
